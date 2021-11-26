@@ -8,11 +8,7 @@ django = "*"
 djangorestframework = "*"
 django-cors-headers = "*"
 mssql-django = "*"
-knox = "*"
-cryptography = "*"
-jinja2 = "*"
-boto3 = "*"
-django-rest-knox = "*"
+pyjwt = "==v1.7.1"
 
 [dev-packages]
 
