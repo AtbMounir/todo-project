@@ -1,5 +1,4 @@
 const appInfo = {
-    title: 'Frontend'
+  title: "Todos App",
 };
 export default appInfo;
-

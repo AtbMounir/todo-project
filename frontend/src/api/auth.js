@@ -1,52 +1,86 @@
-import defaultUser from '../utils/default-user';
+import axios from "axios";
 
 export async function signIn(email, password) {
   try {
-    // Send request
-    console.log(email, password);
+    const params = {
+      email: email,
+      password: password,
+    };
+
+    let current_user, current_error;
+    await axios
+      .post("http://localhost:8000/api/login", params, {
+        withCredentials: true,
+      })
+      .then((response) => (current_user = response.data))
+      .catch((error) => (current_error = error));
+
+    if (current_error != null) {
+      throw new Error(current_error);
+    }
 
     return {
       isOk: true,
-      data: defaultUser
+      data: current_user,
     };
-  }
-  catch {
+  } catch {
     return {
       isOk: false,
-      message: "Authentication failed"
+      message: "Authentication failed",
     };
   }
 }
 
 export async function getUser() {
   try {
-    // Send request
+    let current_user, current_error;
+    await axios
+      .get("http://localhost:8000/api/user", { withCredentials: true })
+      .then((response) => (current_user = response.data))
+      .catch((error) => (current_error = error));
+
+    if (current_error != null) {
+      throw new Error(current_error);
+    }
 
     return {
       isOk: true,
-      data: defaultUser
+      data: current_user,
     };
-  }
-  catch {
+  } catch {
     return {
-      isOk: false
+      isOk: false,
     };
   }
 }
 
-export async function createAccount(email, password) {
+export async function createAccount(username, email, password) {
   try {
-    // Send request
-    console.log(email, password);
+    const params = {
+      username: username,
+      email: email,
+      password: password,
+    };
+
+    let current_error;
+    await axios
+      .post("http://localhost:8000/api/register", params, {
+        withCredentials: true,
+      })
+      .then((response) => response)
+      .catch((error) => (current_error = error));
+
+    if (current_error != null) {
+      throw new Error(current_error);
+    }
 
     return {
-      isOk: true
+      isOk: true,
     };
-  }
-  catch {
+  } catch {
     return {
       isOk: false,
-      message: "Failed to create account"
+      message: "Failed to create account",
     };
   }
 }
@@ -57,14 +91,13 @@ export async function changePassword(email, recoveryCode) {
     console.log(email, recoveryCode);
 
     return {
-      isOk: true
+      isOk: true,
     };
-  }
-  catch {
+  } catch {
     return {
       isOk: false,
-      message: "Failed to change password"
-    }
+      message: "Failed to change password",
+    };
   }
 }
 
@@ -74,13 +107,12 @@ export async function resetPassword(email) {
     console.log(email);
 
     return {
-      isOk: true
+      isOk: true,
     };
-  }
-  catch {
+  } catch {
     return {
       isOk: false,
-      message: "Failed to reset password"
+      message: "Failed to reset password",
     };
   }
 }

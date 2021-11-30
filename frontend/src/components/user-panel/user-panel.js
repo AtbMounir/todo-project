@@ -1,57 +1,46 @@
-import React, { useMemo } from 'react';
-import { useHistory } from "react-router-dom";
-import ContextMenu, { Position } from 'devextreme-react/context-menu';
-import List from 'devextreme-react/list';
-import { useAuth } from '../../contexts/auth';
-import './user-panel.scss';
+import React, { useMemo } from "react";
+import ContextMenu, { Position } from "devextreme-react/context-menu";
+import List from "devextreme-react/list";
+import { useAuth } from "../../contexts/auth";
+import "./user-panel.scss";
+
+const top_info_style = {
+  height: "30px",
+};
 
 export default function UserPanel({ menuMode }) {
   const { user, signOut } = useAuth();
-  const history = useHistory();
 
-  function navigateToProfile() {
-    history.push("/profile");
-  }
-  const menuItems = useMemo(() => ([
-    {
-      text: 'Profile',
-      icon: 'user',
-      onClick: navigateToProfile
-    },
-    {
-      text: 'Logout',
-      icon: 'runner',
-      onClick: signOut
-    }
-  ]), [signOut]);
+  const menuItems = useMemo(
+    () => [
+      {
+        text: "Logout",
+        icon: "runner",
+        onClick: signOut,
+      },
+    ],
+    [signOut]
+  );
 
   return (
-    <div className={'user-panel'}>
-      <div className={'user-info'}>
-        <div className={'image-container'}>
-          <div
-            style={{
-              background: `url(${user.avatarUrl}) no-repeat #fff`,
-              backgroundSize: 'cover'
-            }}
-            className={'user-image'} />
-        </div>
-        <div className={'user-name'}>{user.email}</div>
+    <div className={"user-panel"}>
+      <div className={"user-info"} style={top_info_style}>
+        <div className={"user-name"}>{user.username}</div>
       </div>
 
-      {menuMode === 'context' && (
+      {menuMode === "context" && (
         <ContextMenu
           items={menuItems}
-          target={'.user-button'}
-          showEvent={'dxclick'}
+          target={".user-button"}
+          showEvent={"dxclick"}
           width={210}
-          cssClass={'user-menu'}
+          cssClass={"user-menu"}
         >
-          <Position my={'top center'} at={'bottom center'} />
+          <Position my={"top center"} at={"bottom center"} />
         </ContextMenu>
       )}
-      {menuMode === 'list' && (
-        <List className={'dx-toolbar-menu-action'} items={menuItems} />
+      {menuMode === "list" && (
+        <List className={"dx-toolbar-menu-action"} items={menuItems} />
       )}
     </div>
   );

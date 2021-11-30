@@ -9,16 +9,19 @@ import jwt, datetime
 
 class RegisterView(APIView):
   def post(self, request):
+    new_id = Users.objects.latest('id').id + 1
+    request.data["id"] = new_id
+
     serializer = UserSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
-    return Response(serializer.data)
+    return Response()
 
 class LoginView(APIView):
   def post(self, request):
-    username = request.data['username']
+    email = request.data['email']
     password = request.data['password']
-    user = Users.objects.filter(username=username).first()
+    user = Users.objects.filter(email=email).first()
 
     if user is None:
       raise AuthenticationFailed('User not found')
@@ -33,10 +36,8 @@ class LoginView(APIView):
     token = jwt.encode(payload, 'secret_user', algorithm='HS256').decode('utf-8')
     
     response = Response()
-    response.set_cookie(key='jwt', value=token, httponly=True)
-    response.data = {
-      'jwt': token
-    }
+    response.set_cookie(key='jwt', value=token)
+    response.data = UserSerializer(user).data
 
     return response
 
@@ -53,12 +54,3 @@ class UserView(APIView):
 
     serializer = UserSerializer(user)
     return Response(serializer.data)
-  
-class LogoutView(APIView):
-  def post(self, request):
-    response = Response()
-    response.delete_cookie('jwt')
-    response.data = {
-      'message': 'success'
-    }
-    return response
